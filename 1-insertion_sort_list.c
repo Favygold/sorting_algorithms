@@ -1,36 +1,81 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "sort.h"
 
-void insertion_sort_list(listint_t**list);
+/**
+ * swap_nodes - swap between 2 nodes
+ *
+ * @slow: pointer to the first node to swap
+ * @fast: pointer to the second node to swap
+ * @list: double linked list
+ * Return: void
+ */
+void swap_nodes(listint_t **slow, listint_t **fast, listint_t **list)
 {
-    for (int i = 1; i < size; i++)
-    {
-        int value = A[i];
-        int space = i;
-        while (space > 0 && A[space - 1] > value)
-        {
-            A[space] = A[space - 1];
-            space--;
-        }
-        A[space] = value;
-    }
+	listint_t *before, *after;
+
+	/* restriction: if one of them is NULL */
+	if (!(*slow) || !(*fast))
+		return;
+
+	/* input: before->slow->fast->after */
+	/* output: before->fast->slow->after */
+	before = (*slow)->prev;
+	after = (*fast)->next;
+	/* before -><- faster */
+	if (before)
+		before->next = (*fast);
+	(*fast)->prev = before;
+	/* fast -><- slow */
+	(*fast)->next = (*slow);
+	(*slow)->prev = (*fast);
+	/* slow -><- after */
+	(*slow)->next = after;
+	if (after)
+		after->prev = (*slow);
+	/* changing memory address value of the pointers */
+	*slow = *fast;
+	*fast = (*slow)->next;
+	/* CASE 0: start at the node -> set the head of LL */
+	if (!before)
+		*list = *slow;
 }
 
-int main()
+/**
+ * insertion_sort_list - sort the list like insertion
+ *
+ * @list: linked list
+ * Return: void
+ */
+void insertion_sort_list(listint_t **list)
 {
-    int A[] = {-3, 2, -1, -5, 6, 4, 0, 21, 100, -55, 310, 1000};
+	listint_t *head, *reverse_head, *tmp;
 
-    printf("\nInput array is:");
-    for (int i = 0; i < 12; i++)
-        printf(" %d", A[i]);
+	if (!list || !(*list) || (!((*list)->prev) && !((*list)->next)))
+		return;
 
-    insertionSort(A, 12);
-
-    printf("\nSorted array is:");
-    for (int i = 0; i < 12; i++)
-        printf(" %d", A[i]);
-    printf("\n");
-
-    return 0;
+	head = *list;
+	head = head->next;
+	while (head)
+	{
+		reverse_head = head->prev;
+		/* go through the array since left to right until you find a less number */
+		if (reverse_head->n > head->n)
+		{
+			/* when you find a small number, swap */
+			swap_nodes(&reverse_head, &head, list);
+			print_list(*list);
+			/* through back the array until you find a less number */
+			while (reverse_head->prev)
+			{
+				if ((reverse_head->n) < (reverse_head->prev->n))
+				{
+					/* create a tmp and swap again if it is necessary */
+					tmp = reverse_head->prev;
+					swap_nodes(&(tmp), &reverse_head, list);
+					print_list(*list);
+				}
+				reverse_head = reverse_head->prev;
+			}
+		}
+		head = head->next;
+	}
 }

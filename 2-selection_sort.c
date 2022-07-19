@@ -1,39 +1,36 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "sort.h"
 
-void selection_sort(int*array, size_t size);
+/**
+ * selection_sort - choose the min number and swap between the initial
+ *
+ * @array: array of integers
+ * @size: size of the array
+ * Return: void
+ */
+void selection_sort(int *array, size_t size)
 {
-	for (int i = 0; i < size - 1; i++)
+	unsigned int i, j, index, swap;
+	int little;
+
+	if (size <= 1)
+		return;
+
+	for (j = 0; j < size; j++)
 	{
-		int min = i;
-		for (int j = i + 1; j < size; j++)
+		/* step1: while through the array to find the small number */
+		swap = 0;
+		little = array[j];
+		for (i = j; i < size; i++)
 		{
-			if (A[j] < A[min])
-			{
-				min = j;
-			}
+			if (array[i] < little)
+				little = array[i], index = i, swap = 1;
 		}
-		int temp = A[min];
-		A[min] = A[i];
-		A[i] = temp;
+		/* swap */
+		if (swap == 1)
+		{
+			array[index] = array[j];
+			array[j] = little;
+			print_array(array, size);
+		}
 	}
-}
-
-int main()
-{
-	int A[] = {-3, 2, -1, -5, 6, 4, 0, 21, 100, -55, 310, 1000};
-
-	printf("\nInput array is:");
-	for (int i = 0; i < 12; i++)
-		printf(" %d", A[i]);
-
-	selectionSort(A, 12);
-
-	printf("\nSorted array is:");
-	for (int i = 0; i < 12; i++)
-		printf(" %d", A[i]);
-	printf("\n");
-
-	return 0;
 }
